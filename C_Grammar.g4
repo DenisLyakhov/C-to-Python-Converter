@@ -11,6 +11,7 @@ declaration
     :   variableDeclaration
     |   arrayDeclaration
     |   functionDeclaration
+    |   functionCall ';'
     ;
 
 
@@ -28,6 +29,10 @@ assignmentExpression
     :   variableAssignment ';'
     |   arrayAssignment ';'
     |   unaryExpression ';'
+    ;
+
+functionCall
+    :   Identifier '(' expression? (',' expression)* ')'
     ;
 
 variableAssignment
@@ -69,14 +74,24 @@ expression
     |   Quotes (Char|Identifier|Number)? Quotes
     |   unaryExpression
     |   expression unaryOperator expression (unaryOperator expression)*
+    |   functionCall
     ;
 
 
 unaryExpression
     :
-    (('++' |  '--') Identifier) 
-    | (Identifier ('++'|'--')) 
-    | ('!' Identifier)
+    incrementOperation | decrementOperation | notOperation;
+
+incrementOperation
+    :   '++' Identifier | Identifier '++'
+    ;
+
+decrementOperation
+    :   '--' Identifier | Identifier '--'
+    ;
+
+notOperation
+    :   '!' Identifier
     ;
 
 unaryOperator
@@ -167,10 +182,19 @@ forExpression
     ;
 
 jumpStatement
-    :   (('continue'| 'break')
-    |   'return' expression?
-    )
-    ';'
+    :   ((continueStatement| breakStatement) | returnStatement) ';'
+    ;
+
+returnStatement
+    :   'return' expression?
+    ;
+
+breakStatement
+    :   'break'
+    ;
+
+continueStatement
+    :   'continue'
     ;
 
 Apostrophe : '\'';

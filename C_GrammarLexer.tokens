@@ -44,8 +44,8 @@ FloatNumber=43
 Apostrophe=44
 Quotes=45
 Whitespace=46
-'='=1
-';'=2
+';'=1
+'='=2
 '('=3
 ','=4
 ')'=5
@@ -80,8 +80,8 @@ Whitespace=46
 'else'=34
 'while'=35
 'for'=36
-'continue'=37
+'return'=37
 'break'=38
-'return'=39
+'continue'=39
 '\''=44
 '"'=45

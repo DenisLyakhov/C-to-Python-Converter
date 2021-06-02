@@ -62,6 +62,15 @@ class C_GrammarListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by C_GrammarParser#functionCall.
+    def enterFunctionCall(self, ctx:C_GrammarParser.FunctionCallContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#functionCall.
+    def exitFunctionCall(self, ctx:C_GrammarParser.FunctionCallContext):
+        pass
+
+
     # Enter a parse tree produced by C_GrammarParser#variableAssignment.
     def enterVariableAssignment(self, ctx:C_GrammarParser.VariableAssignmentContext):
         pass
@@ -131,6 +140,33 @@ class C_GrammarListener(ParseTreeListener):
 
     # Exit a parse tree produced by C_GrammarParser#unaryExpression.
     def exitUnaryExpression(self, ctx:C_GrammarParser.UnaryExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#incrementOperation.
+    def enterIncrementOperation(self, ctx:C_GrammarParser.IncrementOperationContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#incrementOperation.
+    def exitIncrementOperation(self, ctx:C_GrammarParser.IncrementOperationContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#decrementOperation.
+    def enterDecrementOperation(self, ctx:C_GrammarParser.DecrementOperationContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#decrementOperation.
+    def exitDecrementOperation(self, ctx:C_GrammarParser.DecrementOperationContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#notOperation.
+    def enterNotOperation(self, ctx:C_GrammarParser.NotOperationContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#notOperation.
+    def exitNotOperation(self, ctx:C_GrammarParser.NotOperationContext):
         pass
 
 
@@ -230,6 +266,33 @@ class C_GrammarListener(ParseTreeListener):
 
     # Exit a parse tree produced by C_GrammarParser#jumpStatement.
     def exitJumpStatement(self, ctx:C_GrammarParser.JumpStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#returnStatement.
+    def enterReturnStatement(self, ctx:C_GrammarParser.ReturnStatementContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#returnStatement.
+    def exitReturnStatement(self, ctx:C_GrammarParser.ReturnStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#breakStatement.
+    def enterBreakStatement(self, ctx:C_GrammarParser.BreakStatementContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#breakStatement.
+    def exitBreakStatement(self, ctx:C_GrammarParser.BreakStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#continueStatement.
+    def enterContinueStatement(self, ctx:C_GrammarParser.ContinueStatementContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#continueStatement.
+    def exitContinueStatement(self, ctx:C_GrammarParser.ContinueStatementContext):
         pass
 
 
