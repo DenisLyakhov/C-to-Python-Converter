@@ -84,21 +84,23 @@ class C_GrammarPrintListener(C_GrammarListener):
 
 	def convertReturnStatement(self, ctx, level):
 		# return 'expression'
-		self.convertedString += self.getTabs(level) + 'return ' + ctx.expression().getText() + '\n'
+		self.convertedString += self.getTabs(level) + ctx.getText() + '\n'
 
 	def convertFunctionCall(self, ctx, level):
 		# functionName(arg1, arg2, ...)
-		self.convertedString += self.getTabs(level) + ctx.Identifier().getText() + "("
+		# self.convertedString += self.getTabs(level) + ctx.Identifier().getText() + "("
 
-		numOfExpressions = len(ctx.expression())
+		# numOfExpressions = len(ctx.expression())
 
-		if(numOfExpressions >= 1):
-			self.convertedString += ctx.expression()[0].getText()
-			if(numOfExpressions > 1):
-				for i in range(1, numOfExpressions):
-					self.convertedString += ", " + ctx.expression()[i].getText()
+		# if(numOfExpressions >= 1):
+		# 	self.convertedString += ctx.expression()[0].getText()
+		# 	if(numOfExpressions > 1):
+		# 		for i in range(1, numOfExpressions):
+		# 			self.convertedString += ", " + ctx.expression()[i].getText()
 
-		self.convertedString += ")\n"
+		# self.convertedString += ")\n"
+
+		self.convertedString += ctx.getText();
 
 
 	def convertVariableDeclaration(self, ctx, level):
@@ -107,6 +109,10 @@ class C_GrammarPrintListener(C_GrammarListener):
 		self.convertedString += self.getTabs(level) + ctx.Identifier().getText() + ' = '
 
 		if (ctx.variableInitializer() is not None):
+
+			if(ctx.variableInitializer().minusOperator() is not None):
+				self.convertedString += '-'
+
 			# type var = 'expression'
 			self.convertedString += ctx.variableInitializer().expression().getText()
 		else:
@@ -118,21 +124,33 @@ class C_GrammarPrintListener(C_GrammarListener):
 	def convertArrayDeclaration(self, ctx, level):
 
 		# type arr = [
-		self.convertedString += self.getTabs(level) + ctx.Identifier().getText() + ' = ['
+		self.convertedString += self.getTabs(level) + ctx.Identifier().getText() + ' = '
 
-		# If array was initialized with variables
-		if(ctx.arrayInitializer() is not None):
+		# # If array was initialized with variables
+		# if(ctx.arrayInitializer() is not None):
 
-			if(ctx.arrayInitializer().expression() is not None):
+		# 	if(len(ctx.arrayInitializer().arraySubInitializer()) == 1):
+		# 		self.convertedString += ctx.arrayInitializer().arraySubInitializer()[0].expression()[0].getText()
+		# 		for i in range(1, len(ctx.arrayInitializer().arraySubInitializer()[0].expression())):
+		# 			self.convertedString += ', ' + ctx.arrayInitializer().arraySubInitializer()[0].expression()[i].getText()
+		# 	else:
+		# 		#if(len(ctx.arrayInitializer().arraySubInitializer()) == 1 and ctx.arrayInitializer().arraySubInitializer()[0].expression() is not None):
+		# 		for k in range(len(ctx.arrayInitializer().arraySubInitializer())):
 
-				# Extracting first variable: type arr = [var1
-				self.convertedString += ctx.arrayInitializer().expression()[0].getText()
+		# 			# Extracting first variable: type arr = [var1
+		# 			self.convertedString += '[' + ctx.arrayInitializer().arraySubInitializer()[k].expression()[0].getText()
 
-				# In case there're multiple variables: type arr = [var1, var2, var3, ...
-				for i in range(1, len(ctx.arrayInitializer().expression())):
-					self.convertedString += ', ' + ctx.arrayInitializer().expression()[i].getText()
+		# 			# In case there're multiple variables: type arr = [var1, var2, var3, ...
+		# 			for i in range(1, len(ctx.arrayInitializer().arraySubInitializer()[k].expression())):
+		# 				self.convertedString += ', ' + ctx.arrayInitializer().arraySubInitializer()[k].expression()[i].getText()
 
-		self.convertedString += ']\n'
+		# 			self.convertedString += ']'
+
+		arrayDeclarationStr = ctx.arrayInitializer().getText();
+		arrayDeclarationStr = arrayDeclarationStr.replace('{','[');
+		arrayDeclarationStr = arrayDeclarationStr.replace('}',']');
+
+		self.convertedString += arrayDeclarationStr + '\n';
 
 	def convertAssignmentExpression(self, ctx, level):
 
@@ -224,6 +242,7 @@ class C_GrammarPrintListener(C_GrammarListener):
 # 	return f1(c, d);
 # }
 # func(x, y);
+
 
 
 def main():	

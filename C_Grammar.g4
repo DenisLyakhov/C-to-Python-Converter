@@ -32,7 +32,7 @@ assignmentExpression
     ;
 
 functionCall
-    :   Identifier '(' expression? (',' expression)* ')'
+    :   Identifier '(' (minusOperator? expression)? (',' minusOperator? expression)* ')'
     ;
 
 variableAssignment
@@ -44,7 +44,7 @@ arrayAssignment
     ;
 
 variableInitializer
-    :   expression
+    :   minusOperator? expression
     ;
 
 arrayDeclaration
@@ -61,19 +61,23 @@ Number
     ;
 
 arrayInitializer
-    :   '{' expression (',' expression)* '}'
+    :   arraySubInitializer | '{' arraySubInitializer (',' arraySubInitializer)* '}'
+    ;
+
+arraySubInitializer
+    :   '{' minusOperator? expression (',' minusOperator? expression)* '}'
     ;
 
 
 expression
-    :   '(' expression ')'
+    :   '(' minusOperator? expression ')'
     |   Number
     |   Identifier
     |   FloatNumber
     |   Apostrophe (Char|Identifier|Number)? Apostrophe
     |   Quotes (Char|Identifier|Number)? Quotes
     |   unaryExpression
-    |   expression unaryOperator expression (unaryOperator expression)*
+    |   expression (binaryOperator|minusOperator) expression ((binaryOperator|minusOperator) expression)*
     |   functionCall
     ;
 
@@ -94,8 +98,12 @@ notOperation
     :   '!' Identifier
     ;
 
-unaryOperator
-    :   '||' |'&&' | '*' | '+' | '-' | '/' | '%' | '==' | '>' | '<' | '<=' | '>='
+minusOperator
+    :   '-'
+    ;
+
+binaryOperator
+    :   '||' |'&&' | '*' | '+' | '/' | '%' | '==' | '>' | '<' | '<=' | '>='
     ;
 
 
@@ -161,7 +169,7 @@ blockItem
     ;
 
 ifStatement 
-    :   'if' '(' expression+ ')' statement ('else' statement)? 
+    :   'if' '(' minusOperator? expression+ ')' statement ('else' statement)? 
     ;
 
 iterationStatement
@@ -186,7 +194,7 @@ jumpStatement
     ;
 
 returnStatement
-    :   'return' expression?
+    :   'return' (minusOperator? expression)?
     ;
 
 breakStatement

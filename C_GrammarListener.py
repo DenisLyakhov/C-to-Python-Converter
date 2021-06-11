@@ -125,6 +125,15 @@ class C_GrammarListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by C_GrammarParser#arraySubInitializer.
+    def enterArraySubInitializer(self, ctx:C_GrammarParser.ArraySubInitializerContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#arraySubInitializer.
+    def exitArraySubInitializer(self, ctx:C_GrammarParser.ArraySubInitializerContext):
+        pass
+
+
     # Enter a parse tree produced by C_GrammarParser#expression.
     def enterExpression(self, ctx:C_GrammarParser.ExpressionContext):
         pass
@@ -170,12 +179,21 @@ class C_GrammarListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by C_GrammarParser#unaryOperator.
-    def enterUnaryOperator(self, ctx:C_GrammarParser.UnaryOperatorContext):
+    # Enter a parse tree produced by C_GrammarParser#minusOperator.
+    def enterMinusOperator(self, ctx:C_GrammarParser.MinusOperatorContext):
         pass
 
-    # Exit a parse tree produced by C_GrammarParser#unaryOperator.
-    def exitUnaryOperator(self, ctx:C_GrammarParser.UnaryOperatorContext):
+    # Exit a parse tree produced by C_GrammarParser#minusOperator.
+    def exitMinusOperator(self, ctx:C_GrammarParser.MinusOperatorContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#binaryOperator.
+    def enterBinaryOperator(self, ctx:C_GrammarParser.BinaryOperatorContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#binaryOperator.
+    def exitBinaryOperator(self, ctx:C_GrammarParser.BinaryOperatorContext):
         pass
 
 
