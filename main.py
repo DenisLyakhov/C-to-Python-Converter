@@ -182,7 +182,6 @@ class C_GrammarPrintListener(C_GrammarListener):
 		# a child from context in order to get assignment type (variableAssignment, arrayAssignment or unaryExpression)
 		assignmentCtx = ctx.getChild(0)
 		assignmentCtxRuleName = C_GrammarParser.ruleNames[assignmentCtx.getRuleIndex()]
-		self.convertedString += self.getTabs(level)
 
 		# Choosing appropriate action for the correct assignment
 		if (ctx.variableAssignment() is not None):
@@ -191,11 +190,11 @@ class C_GrammarPrintListener(C_GrammarListener):
 		elif (ctx.arrayAssignment() is not None):
 			self.convertedString += ctx.arrayAssignment().getText()
 
-		elif (assignmentCtxRuleName == "incrementOperation"):
-			self.convertedString += assignmentCtx.Identifier() + " += 1"
+		elif (C_GrammarParser.ruleNames[assignmentCtx.getChild(0).getRuleIndex()] == "incrementOperation"):
+			self.convertedString += assignmentCtx.getChild(0).Identifier().getText() + " += 1"
 
-		elif(assignmentCtxRuleName == "decrementOperation"):
-			self.convertedString += assignmentCtx.Identifier() + " -= 1"
+		elif(C_GrammarParser.ruleNames[assignmentCtx.getChild(0).getRuleIndex()] == "decrementOperation"):
+			self.convertedString += assignmentCtx.getChild(0).Identifier().getText() + " -= 1"
 
 		self.convertedString += '\n'
 
