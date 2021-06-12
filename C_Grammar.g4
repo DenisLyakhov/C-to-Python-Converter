@@ -153,7 +153,7 @@ typeSpecifier
 
 statement
     : compoundStatement
-    | ifStatement
+    | conditionStatement
     | iterationStatement
     | jumpStatement
     ;
@@ -168,8 +168,20 @@ blockItem
     | assignmentExpression
     ;
 
-ifStatement 
-    :   'if' '(' minusOperator? expression+ ')' statement ('else' statement)? 
+conditionStatement 
+    :   ifStatement ifElseStatement* elseStatement?
+    ;
+
+ifStatement
+    : 'if (' minusOperator? expression+ ')' statement
+    ;
+
+ifElseStatement
+    :   'else if (' minusOperator? expression+ ')' statement   
+    ;
+
+elseStatement
+    :   'else' statement
     ;
 
 iterationStatement
