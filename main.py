@@ -8,7 +8,6 @@ class C_GrammarPrintListener(C_GrammarListener):
 
 	# Conversion result
 	convertedString = ""
-
 	# NOT USED
 	def showExternalDeclarations(self, ctx):
 		variables = []
@@ -80,6 +79,31 @@ class C_GrammarPrintListener(C_GrammarListener):
 		self.convertedString += self.getTabs(level) + "def " + funcName + "(" + parameters + "):\n"
 
 		# Increase level of indendation
+		return level + 1
+	def convertIfStatement(self, ctx, level):
+		condition = ctx.expression()[0].getText()
+		self.convertedString += self.getTabs(level) + "if (" + condition + "):\n"
+		if len(ctx.statement()) >= 2:
+			self.convertedString += self.getTabs(level) + "else:\n"
+		return level + 1
+			
+	# iteration statements for, while
+	def convertIterationStatement(self, ctx, level):
+		resConditionString = ''
+		if (ctx.forCondition()):
+			conditions = ctx.forCondition().forExpression().expression().expression()
+			numLess = ctx.forCondition().forDeclaration().variableDeclaration().variableInitializer().getText()
+			letter = conditions[0].getText()
+			numMore = conditions[1].getText()
+			if (numLess == '0'):
+				rangeNums = numMore
+			else:
+				rangeNums = numLess + ', ' + numMore
+			resConditionString = letter + ' in range (' + rangeNums + ')'
+			self.convertedString += self.getTabs(level) + "for " + resConditionString + ":\n"
+		elif (ctx.expression()):
+			condition = ctx.expression().getText()
+			self.convertedString += self.getTabs(level) + "while " + condition + ":\n"
 		return level + 1
 
 	def convertReturnStatement(self, ctx, level):
@@ -179,7 +203,6 @@ class C_GrammarPrintListener(C_GrammarListener):
 		childCtx = ctx.getChild(0)
 		childCtxRuleName = str(C_GrammarParser.ruleNames[childCtx.getRuleIndex()])
 		self.convertedString += self.getTabs(level)
-
 		if(childCtxRuleName == "functionDeclaration"):
 			level = self.convertFunctionDeclaration(childCtx, level)
 		elif(childCtxRuleName == "variableDeclaration"):
@@ -188,7 +211,10 @@ class C_GrammarPrintListener(C_GrammarListener):
 			self.convertArrayDeclaration(childCtx, level)
 		elif(childCtxRuleName == "functionCall"):
 			self.convertFunctionCall(childCtx, level)
-
+		elif(childCtxRuleName == "ifStatement"):
+			level = self.convertIfStatement(childCtx, level)
+		elif(childCtxRuleName == "iterationStatement"):
+			level = self.convertIterationStatement(childCtx, level)
 		return level
 
 	def getTabs(self, level):
@@ -205,16 +231,13 @@ class C_GrammarPrintListener(C_GrammarListener):
 
 		print(ruleName + ": " + ctx.getText())
 
-		if(ruleName == "declaration"):
+		if(ruleName == "declaration" or ruleName == "statement"):
 			level = self.convertDeclaration(ctx, level)
-
 		elif(ruleName == "returnStatement"):
 			self.convertReturnStatement(ctx, level)
 
 		elif(ruleName == "assignmentExpression"):
 			self.convertAssignmentExpression(ctx, level)
-
-
 
 		for i in range(ctx.getChildCount()):
 			element = ctx.getChild(i)

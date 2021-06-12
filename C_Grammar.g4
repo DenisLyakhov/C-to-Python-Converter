@@ -1,7 +1,7 @@
 grammar C_Grammar;
 
 compilationUnit
-    :   (externalDeclaration|assignmentExpression)* EOF
+    :   (externalDeclaration|assignmentExpression|statement)* EOF
     ;
 
 externalDeclaration : declaration ;
