@@ -233,12 +233,39 @@ class C_GrammarListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by C_GrammarParser#conditionStatement.
+    def enterConditionStatement(self, ctx:C_GrammarParser.ConditionStatementContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#conditionStatement.
+    def exitConditionStatement(self, ctx:C_GrammarParser.ConditionStatementContext):
+        pass
+
+
     # Enter a parse tree produced by C_GrammarParser#ifStatement.
     def enterIfStatement(self, ctx:C_GrammarParser.IfStatementContext):
         pass
 
     # Exit a parse tree produced by C_GrammarParser#ifStatement.
     def exitIfStatement(self, ctx:C_GrammarParser.IfStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#ifElseStatement.
+    def enterIfElseStatement(self, ctx:C_GrammarParser.IfElseStatementContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#ifElseStatement.
+    def exitIfElseStatement(self, ctx:C_GrammarParser.IfElseStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#elseStatement.
+    def enterElseStatement(self, ctx:C_GrammarParser.ElseStatementContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#elseStatement.
+    def exitElseStatement(self, ctx:C_GrammarParser.ElseStatementContext):
         pass
 
 
