@@ -169,7 +169,9 @@ blockItem
     ;
 
 conditionStatement 
-    :   ifStatement ifElseStatement* elseStatement?
+    : ifStatement 
+    | ifElseStatement* 
+    | elseStatement?
     ;
 
 ifStatement

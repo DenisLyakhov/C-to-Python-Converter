@@ -81,12 +81,16 @@ class C_GrammarPrintListener(C_GrammarListener):
 		# Increase level of indendation
 		return level + 1
 	def convertIfStatement(self, ctx, level):
-		condition = ctx.expression()[0].getText()
+		condition = ctx.ifStatement().expression()[0].getText()
 		self.convertedString += self.getTabs(level) + "if (" + condition + "):\n"
-		if len(ctx.statement()) >= 2:
-			self.convertedString += self.getTabs(level) + "else:\n"
 		return level + 1
-			
+	def convertIfElseStatement(self, ctx, level):
+		condition = ctx.ifStatement().expression()[0].getText()
+		self.convertedString += self.getTabs(level) + "elif (" + condition + "):\n"
+		return level + 1
+	def convertElseStatement(self, ctx, level):
+		self.convertedString += self.getTabs(level) + " else:\n"
+		return level + 1	
 	# iteration statements for, while
 	def convertIterationStatement(self, ctx, level):
 		resConditionString = ''
@@ -212,13 +216,15 @@ class C_GrammarPrintListener(C_GrammarListener):
 		elif(childCtxRuleName == "functionCall"):
 			self.convertFunctionCall(childCtx, level)
 		return level
-	def convertStatement(self, ctx, level):
+	def convertCondStatement(self, ctx, level):
 		childCtx = ctx.getChild(0)
 		childCtxRuleName = str(C_GrammarParser.ruleNames[childCtx.getRuleIndex()])
 		if(childCtxRuleName == "ifStatement"):
-			level = self.convertIfStatement(childCtx, level)
-		elif(childCtxRuleName == "iterationStatement"):
-			level = self.convertIterationStatement(childCtx, level)
+			level = self.convertIfStatement(ctx, level)
+		elif(childCtxRuleName == "ifElseStatement"):
+			level = self.convertElseStatement(ctx, level)
+		elif(childCtxRuleName == "elseStatement"):
+			level = self.convertIfElseStatement(ctx, level)
 		return level
 	def getTabs(self, level):
 		tabs = ""
@@ -242,9 +248,10 @@ class C_GrammarPrintListener(C_GrammarListener):
 		elif(ruleName == "assignmentExpression"):
 			self.convertAssignmentExpression(ctx, level)
 
-		elif(ruleName == "statement"):
-			level = self.convertStatement(ctx, level)
-
+		elif(ruleName == "conditionStatement"):
+			level = self.convertCondStatement(ctx, level)
+		elif(ruleName == "iterationStatement"):
+			level = self.convertIterationStatement(ctx, level)
 		for i in range(ctx.getChildCount()):
 			element = ctx.getChild(i)
 			if (isinstance(element, RuleContext)):
