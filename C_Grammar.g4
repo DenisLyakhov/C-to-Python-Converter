@@ -21,7 +21,7 @@ variableDeclaration
 
 
 functionDeclaration
-    : typeSpecifier Identifier '(' (typeSpecifier Identifier)? (',' typeSpecifier Identifier)* ')' statement
+    : typeSpecifier Identifier '(' (typeSpecifier Identifier ('[' expression? ']')* )? (',' typeSpecifier Identifier ('[' expression? ']')*)* ')' statement
     ;
 
 
@@ -40,7 +40,7 @@ variableAssignment
     ;
 
 arrayAssignment
-    :   Identifier '[' expression ']' '=' variableInitializer
+    :   Identifier ('[' expression ']')+ '=' variableInitializer
     ;
 
 variableInitializer
@@ -72,7 +72,7 @@ arraySubInitializer
 expression
     :   '(' minusOperator? expression ')'
     |   Number
-    |   Identifier
+    |   Identifier ('[' expression ']')*
     |   FloatNumber
     |   Apostrophe (Char|Identifier|Number)? Apostrophe
     |   Quotes (Char|Identifier|Number)? Quotes
@@ -169,17 +169,17 @@ blockItem
     ;
 
 conditionStatement 
-    : ifStatement 
-    | ifElseStatement* 
-    | elseStatement?
+    :   ifStatement 
+    |   ifElseStatement
+    |   elseStatement
     ;
 
 ifStatement
-    : 'if (' minusOperator? expression+ ')' statement
+    : 'if' '(' minusOperator? expression+ ')' statement
     ;
 
 ifElseStatement
-    :   'else if (' minusOperator? expression+ ')' statement   
+    :   'else if' '(' minusOperator? expression+ ')' statement   
     ;
 
 elseStatement

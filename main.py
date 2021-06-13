@@ -85,11 +85,11 @@ class C_GrammarPrintListener(C_GrammarListener):
 		self.convertedString += self.getTabs(level) + "if (" + condition + "):\n"
 		return level + 1
 	def convertIfElseStatement(self, ctx, level):
-		condition = ctx.ifStatement().expression()[0].getText()
+		condition = ctx.ifElseStatement().expression()[0].getText()
 		self.convertedString += self.getTabs(level) + "elif (" + condition + "):\n"
 		return level + 1
 	def convertElseStatement(self, ctx, level):
-		self.convertedString += self.getTabs(level) + " else:\n"
+		self.convertedString += self.getTabs(level) + "else:\n"
 		return level + 1	
 	# iteration statements for, while
 	def convertIterationStatement(self, ctx, level):
@@ -112,7 +112,11 @@ class C_GrammarPrintListener(C_GrammarListener):
 
 	def convertReturnStatement(self, ctx, level):
 		# return 'expression'
-		self.convertedString += self.getTabs(level) + ctx.getText() + '\n'
+		expression = ''
+		if(ctx.expression()):
+			expression = ctx.expression()[0].getText()
+
+		self.convertedString += self.getTabs(level) + 'return ' + expression + '\n'
 
 	def convertFunctionCall(self, ctx, level):
 		# functionName(arg1, arg2, ...)
@@ -222,9 +226,9 @@ class C_GrammarPrintListener(C_GrammarListener):
 		if(childCtxRuleName == "ifStatement"):
 			level = self.convertIfStatement(ctx, level)
 		elif(childCtxRuleName == "ifElseStatement"):
-			level = self.convertElseStatement(ctx, level)
-		elif(childCtxRuleName == "elseStatement"):
 			level = self.convertIfElseStatement(ctx, level)
+		elif(childCtxRuleName == "elseStatement"):
+			level = self.convertElseStatement(ctx, level)
 		return level
 	def getTabs(self, level):
 		tabs = ""
