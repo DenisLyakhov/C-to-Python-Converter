@@ -26,6 +26,15 @@ class C_GrammarListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by C_GrammarParser#libraryImport.
+    def enterLibraryImport(self, ctx:C_GrammarParser.LibraryImportContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#libraryImport.
+    def exitLibraryImport(self, ctx:C_GrammarParser.LibraryImportContext):
+        pass
+
+
     # Enter a parse tree produced by C_GrammarParser#declaration.
     def enterDeclaration(self, ctx:C_GrammarParser.DeclarationContext):
         pass
@@ -44,6 +53,15 @@ class C_GrammarListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by C_GrammarParser#arrayDimension.
+    def enterArrayDimension(self, ctx:C_GrammarParser.ArrayDimensionContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#arrayDimension.
+    def exitArrayDimension(self, ctx:C_GrammarParser.ArrayDimensionContext):
+        pass
+
+
     # Enter a parse tree produced by C_GrammarParser#functionDeclaration.
     def enterFunctionDeclaration(self, ctx:C_GrammarParser.FunctionDeclarationContext):
         pass
@@ -59,6 +77,51 @@ class C_GrammarListener(ParseTreeListener):
 
     # Exit a parse tree produced by C_GrammarParser#assignmentExpression.
     def exitAssignmentExpression(self, ctx:C_GrammarParser.AssignmentExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#standardOperation.
+    def enterStandardOperation(self, ctx:C_GrammarParser.StandardOperationContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#standardOperation.
+    def exitStandardOperation(self, ctx:C_GrammarParser.StandardOperationContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#addOperation.
+    def enterAddOperation(self, ctx:C_GrammarParser.AddOperationContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#addOperation.
+    def exitAddOperation(self, ctx:C_GrammarParser.AddOperationContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#minusOperation.
+    def enterMinusOperation(self, ctx:C_GrammarParser.MinusOperationContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#minusOperation.
+    def exitMinusOperation(self, ctx:C_GrammarParser.MinusOperationContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#multOperation.
+    def enterMultOperation(self, ctx:C_GrammarParser.MultOperationContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#multOperation.
+    def exitMultOperation(self, ctx:C_GrammarParser.MultOperationContext):
+        pass
+
+
+    # Enter a parse tree produced by C_GrammarParser#divOperation.
+    def enterDivOperation(self, ctx:C_GrammarParser.DivOperationContext):
+        pass
+
+    # Exit a parse tree produced by C_GrammarParser#divOperation.
+    def exitDivOperation(self, ctx:C_GrammarParser.DivOperationContext):
         pass
 
 

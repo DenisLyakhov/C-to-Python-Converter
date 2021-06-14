@@ -1,11 +1,14 @@
 grammar C_Grammar;
 
 compilationUnit
-    :   (externalDeclaration|assignmentExpression|statement)* EOF
+    :   libraryImport* (externalDeclaration|assignmentExpression|statement)* EOF
     ;
 
 externalDeclaration : declaration ;
 
+libraryImport 
+    : '#include <' Identifier '.h>'
+    ;
 
 declaration
     :   variableDeclaration
@@ -16,12 +19,15 @@ declaration
 
 
 variableDeclaration
-    :   typeSpecifier Identifier ('=' variableInitializer)? ';'
+    :   typeSpecifier Identifier (',' Identifier)* ('=' variableInitializer)? ';'
     ;
 
+arrayDimension
+    :   '[' expression? ']'
+    ;
 
 functionDeclaration
-    : typeSpecifier Identifier '(' (typeSpecifier Identifier ('[' expression? ']')* )? (',' typeSpecifier Identifier ('[' expression? ']')*)* ')' statement
+    : typeSpecifier Identifier '(' (typeSpecifier Identifier arrayDimension* )? (',' typeSpecifier Identifier arrayDimension*)* ')' statement
     ;
 
 
@@ -29,6 +35,26 @@ assignmentExpression
     :   variableAssignment ';'
     |   arrayAssignment ';'
     |   unaryExpression ';'
+    |   standardOperation ';'
+    ;
+
+standardOperation
+    : addOperation | minusOperation | multOperation | divOperation;
+
+addOperation
+    : Identifier '+=' expression
+    ;
+
+minusOperation
+    : Identifier '-=' expression
+    ;
+
+multOperation
+    : Identifier '*=' expression
+    ;
+
+divOperation
+    : Identifier '/=' expression
     ;
 
 functionCall
@@ -40,7 +66,7 @@ variableAssignment
     ;
 
 arrayAssignment
-    :   Identifier ('[' expression ']')+ '=' variableInitializer
+    :   Identifier arrayDimension+ '=' variableInitializer
     ;
 
 variableInitializer
@@ -48,7 +74,7 @@ variableInitializer
     ;
 
 arrayDeclaration
-    :   typeSpecifier Identifier ('[' expression? ']')+ ('=' arrayInitializer)? ';'
+    :   typeSpecifier Identifier arrayDimension+ ('=' arrayInitializer)? ';'
     ;
 
 arrayProperies
@@ -72,7 +98,7 @@ arraySubInitializer
 expression
     :   '(' minusOperator? expression ')'
     |   Number
-    |   Identifier ('[' expression ']')*
+    |   Identifier arrayDimension*
     |   FloatNumber
     |   Apostrophe (Char|Identifier|Number)? Apostrophe
     |   Quotes (Char|Identifier|Number)? Quotes
@@ -103,7 +129,7 @@ minusOperator
     ;
 
 binaryOperator
-    :   '||' |'&&' | '*' | '+' | '/' | '%' | '==' | '>' | '<' | '<=' | '>='
+    :   '||' |'&&' | '*' | '+' | '/' | '%' | '==' | '>' | '<' | '<=' | '>=' | '!='
     ;
 
 

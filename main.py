@@ -2,7 +2,6 @@ from antlr4 import *
 from C_GrammarLexer import C_GrammarLexer
 from C_GrammarListener import C_GrammarListener
 from C_GrammarParser import C_GrammarParser
-from pathlib import Path
 import sys
 
 class C_GrammarPrintListener(C_GrammarListener):
@@ -77,16 +76,16 @@ class C_GrammarPrintListener(C_GrammarListener):
 				parameters += ", " + ctx.Identifier()[i].getText()
 
 		# Making "type functionName(type var, ...):" string
-		self.convertedString += "def " + funcName + "(" + parameters + "):\n"
+		self.convertedString += self.getTabs(level) +  "def " + funcName + "(" + parameters + "):\n"
 
 		# Increase level of indendation
 		return level + 1
 	def convertIfStatement(self, ctx, level):
-		condition = ctx.ifStatement().expression()[0].getText()
+		condition = self.convertConditionSymbols(ctx.ifStatement().expression()[0].getText())
 		self.convertedString += self.getTabs(level) + "if (" + condition + "):\n"
 		return level + 1
 	def convertIfElseStatement(self, ctx, level):
-		condition = ctx.ifElseStatement().expression()[0].getText()
+		condition = self.convertConditionSymbols(ctx.ifElseStatement().expression()[0].getText())
 		self.convertedString += self.getTabs(level) + "elif (" + condition + "):\n"
 		return level + 1
 	def convertElseStatement(self, ctx, level):
@@ -97,27 +96,44 @@ class C_GrammarPrintListener(C_GrammarListener):
 		resConditionString = ''
 		if (ctx.forCondition()):
 			conditions = ctx.forCondition().forExpression().expression().expression()
-			numLess = ctx.forCondition().forDeclaration().variableDeclaration().variableInitializer().getText()
+
+			numLess = None
+			if(ctx.forCondition().forDeclaration().variableDeclaration()):
+				numLess = ctx.forCondition().forDeclaration().variableDeclaration().variableInitializer().getText()
+			else:
+				numLess = ctx.forCondition().forDeclaration().assignmentExpression().variableAssignment().variableInitializer().getText();
+			
+
 			letter = conditions[0].getText()
 			numMore = conditions[1].getText()
 			if (numLess == '0'):
 				rangeNums = numMore
 			else:
 				rangeNums = numLess + ', ' + numMore
+
 			resConditionString = letter + ' in range (' + rangeNums + ')'
 			self.convertedString += self.getTabs(level) + "for " + resConditionString + ":\n"
 		elif (ctx.expression()):
-			condition = ctx.expression().getText()
+			condition = self.convertConditionSymbols(ctx.expression().getText())
 			self.convertedString += self.getTabs(level) + "while " + condition + ":\n"
 		return level + 1
 
-	def convertReturnStatement(self, ctx, level):
+	def convertJumpStatement(self, ctx, level):
 		# return 'expression'
-		expression = ''
-		if(ctx.expression()):
-			expression = ctx.expression()[0].getText()
 
-		self.convertedString += self.getTabs(level) + 'return ' + expression + '\n'
+		jumpCtx = ctx.getChild(0)
+		jumpCtxRuleName = C_GrammarParser.ruleNames[jumpCtx.getRuleIndex()]
+
+		if(jumpCtxRuleName == "returnStatement"):
+			expression = ''
+			if(jumpCtx.expression()):
+				expression = self.convertConditionSymbols(jumpCtx.expression().getText())
+
+			self.convertedString += self.getTabs(level) + 'return ' + expression + '\n'
+		elif(jumpCtxRuleName == "continueStatement"):
+			self.convertedString += self.getTabs(level) + 'continue\n'
+		elif(jumpCtxRuleName == "breakStatement"):
+			self.convertedString += self.getTabs(level) + 'break\n'
 
 	def convertFunctionCall(self, ctx, level):
 		# functionName(arg1, arg2, ...)
@@ -133,57 +149,80 @@ class C_GrammarPrintListener(C_GrammarListener):
 
 		# self.convertedString += ")\n"
 
-		self.convertedString += ctx.getText();
+		self.convertedString += self.getTabs(level) + self.convertConditionSymbols(ctx.getText()) + '\n';
 
 
 	def convertVariableDeclaration(self, ctx, level):
 
+		varInit = ""
+		vars = ""
+
 		# type var = 
-		self.convertedString += ctx.Identifier().getText() + ' = '
+		# self.convertedString += ctx.Identifier().getText() + ' = '
 
 		if (ctx.variableInitializer() is not None):
 
 			if(ctx.variableInitializer().minusOperator() is not None):
-				self.convertedString += '-'
+				varInit += '-'
 
 			# type var = 'expression'
-			self.convertedString += ctx.variableInitializer().expression().getText()
+			varInit += self.convertConditionSymbols(ctx.variableInitializer().expression().getText())
 		else:
 			# type var = None
-			self.convertedString += "None"
+			varInit += "None"
 
-		self.convertedString += '\n'
+		for i in range(0, len(ctx.Identifier())):
+			self.convertedString += self.getTabs(level) + ctx.Identifier()[i].getText() + ' = ' + varInit + '\n';
+
+		
 
 	def convertArrayDeclaration(self, ctx, level):
 
 		# type arr = [
-		self.convertedString += ctx.Identifier().getText() + ' = '
+		self.convertedString += self.getTabs(level) + ctx.Identifier().getText() + ' = '
 
-		# # If array was initialized with variables
-		# if(ctx.arrayInitializer() is not None):
+		if(ctx.arrayInitializer()):
 
-		# 	if(len(ctx.arrayInitializer().arraySubInitializer()) == 1):
-		# 		self.convertedString += ctx.arrayInitializer().arraySubInitializer()[0].expression()[0].getText()
-		# 		for i in range(1, len(ctx.arrayInitializer().arraySubInitializer()[0].expression())):
-		# 			self.convertedString += ', ' + ctx.arrayInitializer().arraySubInitializer()[0].expression()[i].getText()
-		# 	else:
-		# 		#if(len(ctx.arrayInitializer().arraySubInitializer()) == 1 and ctx.arrayInitializer().arraySubInitializer()[0].expression() is not None):
-		# 		for k in range(len(ctx.arrayInitializer().arraySubInitializer())):
+			# # If array was initialized with variables
+			# if(ctx.arrayInitializer() is not None):
 
-		# 			# Extracting first variable: type arr = [var1
-		# 			self.convertedString += '[' + ctx.arrayInitializer().arraySubInitializer()[k].expression()[0].getText()
+			# 	if(len(ctx.arrayInitializer().arraySubInitializer()) == 1):
+			# 		self.convertedString += ctx.arrayInitializer().arraySubInitializer()[0].expression()[0].getText()
+			# 		for i in range(1, len(ctx.arrayInitializer().arraySubInitializer()[0].expression())):
+			# 			self.convertedString += ', ' + ctx.arrayInitializer().arraySubInitializer()[0].expression()[i].getText()
+			# 	else:
+			# 		#if(len(ctx.arrayInitializer().arraySubInitializer()) == 1 and ctx.arrayInitializer().arraySubInitializer()[0].expression() is not None):
+			# 		for k in range(len(ctx.arrayInitializer().arraySubInitializer())):
 
-		# 			# In case there're multiple variables: type arr = [var1, var2, var3, ...
-		# 			for i in range(1, len(ctx.arrayInitializer().arraySubInitializer()[k].expression())):
-		# 				self.convertedString += ', ' + ctx.arrayInitializer().arraySubInitializer()[k].expression()[i].getText()
+			# 			# Extracting first variable: type arr = [var1
+			# 			self.convertedString += '[' + ctx.arrayInitializer().arraySubInitializer()[k].expression()[0].getText()
 
-		# 			self.convertedString += ']'
+			# 			# In case there're multiple variables: type arr = [var1, var2, var3, ...
+			# 			for i in range(1, len(ctx.arrayInitializer().arraySubInitializer()[k].expression())):
+			# 				self.convertedString += ', ' + ctx.arrayInitializer().arraySubInitializer()[k].expression()[i].getText()
 
-		arrayDeclarationStr = ctx.arrayInitializer().getText();
-		arrayDeclarationStr = arrayDeclarationStr.replace('{','[');
-		arrayDeclarationStr = arrayDeclarationStr.replace('}',']');
+			# 			self.convertedString += ']'
 
-		self.convertedString += arrayDeclarationStr + '\n';
+			arrayDeclarationStr = self.convertConditionSymbols(ctx.arrayInitializer().getText());
+			arrayDeclarationStr = arrayDeclarationStr.replace('{','[');
+			arrayDeclarationStr = arrayDeclarationStr.replace('}',']');
+
+			self.convertedString += arrayDeclarationStr + '\n';
+		elif(ctx.arrayDimension()):
+			for i in range(len(ctx.arrayDimension())):
+				self.convertedString += '['
+			self.convertedString += 'None'
+			for i in range(len(ctx.arrayDimension())):
+				self.convertedString += ']'
+				if(ctx.arrayDimension()[i].expression()):
+					self.convertedString += '*' + ctx.arrayDimension()[i].expression().getText()
+			self.convertedString += '\n'
+
+	def convertConditionSymbols(self, str):
+		returnStr = str
+		returnStr = returnStr.replace('&&',' and ')
+		returnStr = returnStr.replace('||', ' or ')
+		return returnStr
 
 	def convertAssignmentExpression(self, ctx, level):
 
@@ -195,10 +234,13 @@ class C_GrammarPrintListener(C_GrammarListener):
 		self.convertedString += self.getTabs(level)
 		# Choosing appropriate action for the correct assignment
 		if (ctx.variableAssignment() is not None):
-			self.convertedString += ctx.variableAssignment().getText()
+			self.convertedString += self.convertConditionSymbols(ctx.variableAssignment().getText())
 
 		elif (ctx.arrayAssignment() is not None):
-			self.convertedString += ctx.arrayAssignment().getText()
+			self.convertedString += self.convertConditionSymbols(ctx.arrayAssignment().getText())
+
+		elif (ctx.standardOperation()):
+			self.convertedString += self.convertConditionSymbols(ctx.standardOperation().getText())
 
 		elif (C_GrammarParser.ruleNames[assignmentCtx.getChild(0).getRuleIndex()] == "incrementOperation"):
 			self.convertedString += assignmentCtx.getChild(0).Identifier().getText() + " += 1"
@@ -211,7 +253,7 @@ class C_GrammarPrintListener(C_GrammarListener):
 	def convertDeclaration(self, ctx, level):
 		childCtx = ctx.getChild(0)
 		childCtxRuleName = str(C_GrammarParser.ruleNames[childCtx.getRuleIndex()])
-		self.convertedString += self.getTabs(level)
+		#self.convertedString += self.getTabs(level)
 		if(childCtxRuleName == "functionDeclaration"):
 			level = self.convertFunctionDeclaration(childCtx, level)
 		elif(childCtxRuleName == "variableDeclaration"):
@@ -231,6 +273,8 @@ class C_GrammarPrintListener(C_GrammarListener):
 		elif(childCtxRuleName == "elseStatement"):
 			level = self.convertElseStatement(ctx, level)
 		return level
+
+
 	def getTabs(self, level):
 		tabs = ""
 		for i in range(level):
@@ -247,8 +291,8 @@ class C_GrammarPrintListener(C_GrammarListener):
 
 		if(ruleName == "declaration"):
 			level = self.convertDeclaration(ctx, level)
-		elif(ruleName == "returnStatement"):
-			self.convertReturnStatement(ctx, level)
+		elif(ruleName == "jumpStatement"):
+			self.convertJumpStatement(ctx, level)
 
 		elif(ruleName == "assignmentExpression"):
 			self.convertAssignmentExpression(ctx, level)
@@ -257,6 +301,7 @@ class C_GrammarPrintListener(C_GrammarListener):
 			level = self.convertCondStatement(ctx, level)
 		elif(ruleName == "iterationStatement"):
 			level = self.convertIterationStatement(ctx, level)
+
 		for i in range(ctx.getChildCount()):
 			element = ctx.getChild(i)
 			if (isinstance(element, RuleContext)):
@@ -266,10 +311,14 @@ class C_GrammarPrintListener(C_GrammarListener):
 
 		self.explore(ctx, 0, 0)
 
-		print("\n\n-----------------------------------\nConversion result:")
+		if self.convertedString.find("int main()"):
+			self.convertedString += "if __name__ == '__main__': \n    main()"
+
+		#print("\n\n-----------------------------------\nConversion result:")
 		f = open(sys.argv[1].split(".")[0] + ".py", "w")
 		f.write(self.convertedString)
 		f.close()
+		
 		#self.showExternalDeclarations(ctx);
 		#self.showAssignmentExpressions(ctx.assignmentExpression())
 
