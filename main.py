@@ -2,6 +2,7 @@ from antlr4 import *
 from C_GrammarLexer import C_GrammarLexer
 from C_GrammarListener import C_GrammarListener
 from C_GrammarParser import C_GrammarParser
+from pathlib import Path
 import sys
 
 class C_GrammarPrintListener(C_GrammarListener):
@@ -266,8 +267,9 @@ class C_GrammarPrintListener(C_GrammarListener):
 		self.explore(ctx, 0, 0)
 
 		print("\n\n-----------------------------------\nConversion result:")
-		print(self.convertedString)
-		
+		f = open(sys.argv[1].split(".")[0] + ".py", "w")
+		f.write(self.convertedString)
+		f.close()
 		#self.showExternalDeclarations(ctx);
 		#self.showAssignmentExpressions(ctx.assignmentExpression())
 
@@ -285,14 +287,17 @@ class C_GrammarPrintListener(C_GrammarListener):
 
 
 
-def main():	
+def main(argv):	
 	print('Input: ')
-	lexer = C_GrammarLexer(StdinStream())
-	stream = CommonTokenStream(lexer)
-	parser = C_GrammarParser(stream)
-	tree = parser.compilationUnit()
-	printer = C_GrammarPrintListener()
-	walker = ParseTreeWalker()
-	walker.walk(printer, tree)
+	if len(sys.argv) > 1:
+		fileName = FileStream(argv[1])
+		lexer = C_GrammarLexer(fileName)
+		stream = CommonTokenStream(lexer)
+		parser = C_GrammarParser(stream)
+		tree = parser.compilationUnit()
+		printer = C_GrammarPrintListener()
+		walker = ParseTreeWalker()
+		walker.walk(printer, tree)
 
-main()
+if __name__ == '__main__':
+    main(sys.argv) 
